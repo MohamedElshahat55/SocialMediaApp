@@ -52,7 +52,6 @@ namespace SocialMediaApp.Controllers
 		}
 
 		[HttpPost("login")] // /api/Account/login
-
 		public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
 		{
 			var User = await _dbcontext.AppUsers.SingleOrDefaultAsync(u=>u.UserName ==  loginDto.UserName);
@@ -63,9 +62,7 @@ namespace SocialMediaApp.Controllers
 			var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)); //retun array of bytes
 
 			for(int i = 0; i<computedHash.Length; i++)
-			{
 				if (computedHash[i] != User.PasswordHash[i]) return Unauthorized("Invalid password");
-			}
 			return new UserDto
 			{
 				Username = User.UserName,

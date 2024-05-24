@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SocialMediaApp.Data;
 using SocialMediaApp.Extensions;
 using SocialMediaApp.Interfaces;
+using SocialMediaApp.Middlewares;
 using SocialMediaApp.Services;
 using System.Text;
 
@@ -32,13 +33,17 @@ namespace SocialMediaApp
 
 			var app = builder.Build();
 
+			
+
 			// ADD CORS
 			app.UseCors(builder=>builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
-				app.UseSwagger();
+                // Add Exception Middleware
+                app.UseMiddleware<ExceptionMiddleware>();
+                app.UseSwagger();
 				app.UseSwaggerUI();
 			}
 
