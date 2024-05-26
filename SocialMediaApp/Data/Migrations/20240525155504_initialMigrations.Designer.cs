@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialMediaApp.Data;
 
@@ -11,9 +12,11 @@ using SocialMediaApp.Data;
 namespace SocialMediaApp.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240525155504_initialMigrations")]
+    partial class initialMigrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,9 +63,6 @@ namespace SocialMediaApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastActive")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LookingFor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -99,6 +99,7 @@ namespace SocialMediaApp.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PublicId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")

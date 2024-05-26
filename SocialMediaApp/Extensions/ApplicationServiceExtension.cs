@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.Data;
+using SocialMediaApp.Helpers;
 using SocialMediaApp.Interfaces;
+using SocialMediaApp.Repositories;
 using SocialMediaApp.Services;
 
 namespace SocialMediaApp.Extensions
@@ -11,6 +13,10 @@ namespace SocialMediaApp.Extensions
 		{
 			// Register Token Service
 			services.AddScoped<ITokenService, TokenService>();
+			// Register IRepository
+			services.AddScoped<IRepository,Repository>();
+			// Register AutoMapper
+			services.AddAutoMapper(typeof(AutomapperProfiles));
 
 			//Add ConnectionString
 			services.AddDbContext<DataContext>(opt =>

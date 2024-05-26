@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SocialMediaApp.Data;
+using SocialMediaApp.DataSeeding;
 using SocialMediaApp.Extensions;
 using SocialMediaApp.Interfaces;
 using SocialMediaApp.Middlewares;
@@ -12,9 +13,9 @@ using System.Text;
 
 namespace SocialMediaApp
 {
-	public class Program
+    public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -33,10 +34,30 @@ namespace SocialMediaApp
 
 			var app = builder.Build();
 
-			
+            // Update Database
+            var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            // Craete Object From ILogger
+            var LoggerFactory = services.GetRequiredService<ILoggerFactory>();
+               
 
-			// ADD CORS
-			app.UseCors(builder=>builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
+            try
+            {
+                // Allow CLR Generete object Explicity for DataContext
+                var _dbContext = services.GetRequiredService<DataContext>();
+                await _dbContext.Database.MigrateAsync();
+				await SeedUser.SeedAsync(_dbContext);
+            }
+            catch(Exception ex)
+			{
+                var logger = LoggerFactory.CreateLogger<Program>();
+                logger.LogError(ex, "An Error has been occured during apply migration ");
+            }
+
+
+
+            // ADD CORS
+            app.UseCors(builder=>builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())

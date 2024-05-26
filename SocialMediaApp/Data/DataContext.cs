@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.Entities;
+using System.Reflection;
 
 namespace SocialMediaApp.Data
 {
@@ -9,12 +10,15 @@ namespace SocialMediaApp.Data
 		{
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
-		
-		}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
 
-		public DbSet<AppUser> AppUsers { get; set; }
-	}
+
+
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Photo> Photos  { get; set; }
+
+    }
 }
