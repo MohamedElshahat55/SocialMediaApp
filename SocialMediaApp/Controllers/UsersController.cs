@@ -7,6 +7,8 @@ using SocialMediaApp.Data;
 using SocialMediaApp.DTOs;
 using SocialMediaApp.Entities;
 using SocialMediaApp.Interfaces;
+using System.Runtime.ExceptionServices;
+using System.Security.Claims;
 
 namespace SocialMediaApp.Controllers
 {
@@ -22,20 +24,12 @@ namespace SocialMediaApp.Controllers
             _mapper = mapper;
         }
 
-		[AllowAnonymous]
-		[HttpGet("GetAllUsers")]
+		[HttpGet]
 		public async Task<ActionResult<IEnumerable<MemberDto>>> GetAllUsers()
 		{
 			var users = await _userRepository.GetAllUsersAsync();
 			var userReturnded = _mapper.Map<IEnumerable<MemberDto>>(users);
             return Ok(userReturnded);
-		}
-
-	
-		[HttpGet("GetUserById/{id}")]
-		public async Task<ActionResult<AppUser>> GetUserById(int id)
-		{
-			return Ok(await _userRepository.GetByIdAsync(id));
 		}
 
         [HttpGet("{username}")]
@@ -44,6 +38,21 @@ namespace SocialMediaApp.Controllers
 			var user = await _userRepository.GetUserByNameAsync(username);
             var userReturnded = _mapper.Map<MemberDto>(user);
             return Ok(userReturnded);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdatedMember(MemberUpdatedDTO memberUpdatedDTO)
+        {
+            // 1) we want to find the user name of this user?
+            // how can i find it?! => get it from claims
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // 2) retrive the user from database basedon this username
+            var user = await _userRepository.GetUserByNameAsync(username);
+            if(user == null) return NotFound();
+            // 3) use Auto Mapper
+            _mapper.Map(memberUpdatedDTO, user);
+            if(await _userRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Failed To Update user");
         }
     }
 }
